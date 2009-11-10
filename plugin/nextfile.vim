@@ -170,6 +170,9 @@ func! s:GetFilesList()
         call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
     endfor
 
+    " sort alphabetically
+    call sort(files)
+
     return files
 endfunc
 
