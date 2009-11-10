@@ -65,6 +65,15 @@ scriptencoding utf-8
 "               \   'NFPrev'     : 'NFPrev',
 "               \ }
 "
+"       g:nf_sort_funcref (default: '<SID>SortCompare')
+"           function string or Funcref passed to sort().
+"
+"           default function's definition:
+"               func! s:SortCompare(i, j)
+"                   " alphabetically
+"                   return a:i > a:j
+"               endfunc
+"
 "   COMMANDS:
 "       :NFLoadGlob
 "           load globbed files.
