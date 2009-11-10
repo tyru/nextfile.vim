@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.2
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-30.
+" Last Change: 2009-11-10.
 "
 " Description:
 "   open the next or previous file
@@ -158,8 +158,8 @@ endfunc
 " }}}1
 
 " MAPPING {{{1
-execute printf('nnoremap %s :call <SID>OpenNextFile(1)<CR>', g:nf_map_next)
-execute printf('nnoremap %s :call <SID>OpenNextFile(0)<CR>', g:nf_map_previous)
+execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(1)<CR>', g:nf_map_next)
+execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(0)<CR>', g:nf_map_previous)
 " }}}1
 
 " RESTORE CPO {{{1
