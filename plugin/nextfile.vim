@@ -198,11 +198,42 @@ func! s:OpenNextFile(advance)
     endif
 endfunc
 
+func! s:CmdLoadGlob()
+    " TODO
+endfunc
+
+func! s:CmdNextPrev(is_next, ...)
+    try
+        let times = range(1, a:0 == 0 ? 1 : str2nr(a:1))
+    catch
+        " out of range
+        return
+    endtry
+    for i in times
+        call s:OpenNextFile(a:is_next)
+    endfor
+endfunc
+
 " }}}1
 
 " MAPPING {{{1
 execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(1)<CR>', g:nf_map_next)
 execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(0)<CR>', g:nf_map_previous)
+" }}}1
+
+" COMMANDS {{{1
+let s:command_def = {
+\   'NFLoadGlob' : ['-nargs=+', 'call s:CmdLoadGlob()'],
+\   'NFNext'     : ['-nargs=?', 'call s:CmdNextPrev(1,<f-args>)'],
+\   'NFPrev'     : ['-nargs=?', 'call s:CmdNextPrev(0,<f-args>)'],
+\ }
+for [cmd, name] in items(g:nf_commands)
+    if !empty(name)
+        let [opt, def] = s:command_def[cmd]
+        execute printf("command %s %s %s", opt, name, def)
+    endif
+endfor
+unlet s:command_def
 " }}}1
 
 " RESTORE CPO {{{1
