@@ -49,6 +49,9 @@ scriptencoding utf-8
 "           ignore files of these extensions.
 "           e.g.: "o", "obj", "exe"
 "
+"       g:nf_disable_if_empty_name (default: 0)
+"           do not run mapping if current file name is empty.
+"
 "
 "==================================================
 " }}}1
@@ -84,6 +87,9 @@ endif
 if ! exists('g:nf_ignore_ext') || type(g:nf_ignore_ext) != type([])
     let g:nf_ignore_ext = []
 endif
+if ! exists('g:nf_disable_if_empty_name')
+    let g:nf_disable_if_empty_name = 0
+endif
 " }}}1
 
 
@@ -115,7 +121,7 @@ func! s:GlobPath(path, expr)
 endfunc
 
 func! s:OpenNextFile(advance)
-    if expand('%') ==# ''
+    if g:nf_disable_if_empty_name && expand('%') ==# ''
         return s:Warn("you didn't open any file")
     endif
 
@@ -135,7 +141,8 @@ func! s:OpenNextFile(advance)
         " get current file idx
         let tailed = map(copy(files), 'fnamemodify(v:val, ":t")')
         let idx = s:GetListIdx(tailed, expand('%:t'))
-        " move next or previous
+
+        " move to next or previous
         let idx = a:advance ? idx + 1 : idx - 1
 
     catch /^not found$/
@@ -144,7 +151,7 @@ func! s:OpenNextFile(advance)
     endtry
 
 
-    " can access files[idx]
+    " can access to files[idx]
     if idx >= 0 && get(files, idx, -1) !=# -1
         execute g:nf_open_command . ' ' . fnameescape(files[idx])
     elseif g:nf_loop_files
