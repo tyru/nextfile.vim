@@ -150,21 +150,18 @@ func! s:GetListIdx(lis, elem)
     throw "not found"
 endfunc
 
-func! s:GlobPath(path, expr)
-    let files = split(globpath(a:path, a:expr), '\n')
-    " get filename
-    call map(files, 'fnamemodify(v:val, ":t")')
+func! s:Glob(expr)
+    let files = split(glob(a:expr), '\n')
     " get rid of '.' and '..'
-    call filter(files, 'v:val !=# "." && v:val !=# ".."')
-    call map(files, 'a:path . "/" . v:val')
+    call filter(files, 'fnamemodify(v:val, ":t") !=# "." && fnamemodify(v:val, ":t") !=# ".."')
     return files
 endfunc
 
 func! s:GetFilesList()
     " get files list
-    let files = s:GlobPath(expand('%:p:h'), '*')
+    let files = s:Glob(expand('%:p:h') . '/*')
     if g:nf_include_dotfiles
-        let files += s:GlobPath(expand('%:p:h'), '.*')
+        let files += s:Glob(expand('%:p:h') . '/.*')
     endif
     if g:nf_ignore_dir
         call filter(files, '! isdirectory(v:val)')
@@ -200,7 +197,7 @@ func! s:OpenNextFile(advance)
     " XXX 'idx >= 0' is necessary?
     if idx >= 0 && get(files, idx, -1) !=# -1
         " can access to files[idx]
-        execute g:nf_open_command . ' ' . fnameescape(files[idx])
+        execute g:nf_open_command fnameescape(files[idx])
     elseif g:nf_loop_files
         let idx = idx < 0 ? idx : idx - len(files)
         execute g:nf_open_command . ' ' . fnameescape(files[idx])
