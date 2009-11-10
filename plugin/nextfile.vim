@@ -195,8 +195,7 @@ func! s:OpenNextFile(advance)
     let files = s:GetFilesList()
     if empty(files) | return | endif
     let idx   = s:GetIdx(files, a:advance)
-    " XXX 'idx >= 0' is necessary?
-    if idx >= 0 && get(files, idx, -1) !=# -1
+    if get(files, idx, -1) !=# -1
         " can access to files[idx]
         execute g:nf_open_command fnameescape(files[idx])
     elseif g:nf_loop_files
