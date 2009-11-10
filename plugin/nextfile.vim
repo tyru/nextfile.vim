@@ -88,6 +88,8 @@ scriptencoding utf-8
 "           you can pass the number of loading buffers.
 "
 "
+" TODO
+" - add option of list of patterns to skip specified files
 "==================================================
 " }}}
 
