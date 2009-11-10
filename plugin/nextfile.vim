@@ -52,6 +52,32 @@ scriptencoding utf-8
 "       g:nf_disable_if_empty_name (default: 0)
 "           do not run mapping if current file name is empty.
 "
+"       g:nf_commands (default: see below)
+"           command's names.
+"           if you do not want to define some commands,
+"           please leave '' in command's value.
+"               e.g.: let g:nf_commands = {'NFLoadGlob': ''}
+"
+"           default value:
+"               let g:nf_commands = {
+"               \   'NFLoadGlob' : 'NFLoadGlob',
+"               \   'NFNext'     : 'NFNext',
+"               \   'NFPrev'     : 'NFPrev',
+"               \ }
+"
+"   COMMANDS:
+"       :NFLoadGlob
+"           load globbed files.
+"           this command just load files to buffers, does not edit them.
+"           g:nf_include_dotfiles, g:nf_ignore_*, etc. influence globbed file's list.
+"               :NFLoadGlob *   " to load all files in current directory.
+"       :NFNext
+"           open next file.
+"           you can pass the number of loading buffers.
+"       :NFPrev
+"           open previous file.
+"           you can pass the number of loading buffers.
+"
 "
 "==================================================
 " }}}1
@@ -90,6 +116,18 @@ endif
 if ! exists('g:nf_disable_if_empty_name')
     let g:nf_disable_if_empty_name = 0
 endif
+
+let s:commands = {
+\   'NFLoadGlob' : 'NFLoadGlob',
+\   'NFNext'     : 'NFNext',
+\   'NFPrev'     : 'NFPrev',
+\ }
+if ! exists('g:nf_commands')
+    let g:nf_commands = s:commands
+else
+    call extend(g:nf_commands, s:commands, 'keep')
+endif
+unlet s:commands
 " }}}1
 
 
