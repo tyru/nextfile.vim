@@ -182,9 +182,10 @@ endfunc
 
 
 
-func! s:get_files_list()
+func! s:get_files_list(...)
+    let glob_expr = a:0 == 0 ? '*' : a:1
     " get files list
-    let files = s:glob_list(expand('%:p:h') . '/*')
+    let files = s:glob_list(expand('%:p:h') . '/' . glob_expr)
     if g:nf_include_dotfiles
         let files += s:glob_list(expand('%:p:h') . '/.*')
     endif
@@ -233,7 +234,24 @@ func! s:open_next_file(advance)
 endfunc
 
 func! s:cmd_load_glob(...)
-    " TODO
+    let files = []
+    for glob_expr in a:000
+        " NOTE: load only 'files' currently
+        let files += filter(s:glob_list(glob_expr), 'filereadable(v:val)')
+    endfor
+    " call sort(files, g:nf_sort_funcref)
+    call s:warnf('a:000 [%s], files [%s]', string(a:000), string(files))
+
+    let save_pos   = getpos('.')
+    let save_bufnr = bufnr('%')
+    try
+        for f in files
+            execute 'edit' f
+        endfor
+    finally
+        call setpos('.', save_pos)
+        execute save_bufnr . 'buffer'
+    endtry
 endfunc
 
 func! s:cmd_next_prev(is_next, ...)
@@ -257,7 +275,7 @@ execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(0)<CR>', 
 
 " COMMANDS {{{
 let s:command_def = {
-\   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob()'],
+\   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob(<f-args>)'],
 \   'NFNext'     : ['-nargs=?', 'call s:cmd_next_prev(1,<f-args>)'],
 \   'NFPrev'     : ['-nargs=?', 'call s:cmd_next_prev(0,<f-args>)'],
 \ }
