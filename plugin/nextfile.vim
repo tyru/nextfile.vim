@@ -116,6 +116,9 @@ endif
 if ! exists('g:nf_disable_if_empty_name')
     let g:nf_disable_if_empty_name = 0
 endif
+if ! exists('g:nf_sort_funcref')
+    let g:nf_sort_funcref = '<SID>SortCompare'
+endif
 
 let s:commands = {
 \   'NFLoadGlob' : 'NFLoadGlob',
@@ -157,6 +160,11 @@ func! s:Glob(expr)
     return files
 endfunc
 
+func! s:SortCompare(i, j)
+    " alphabetically
+    return a:i > a:j
+endfunc
+
 func! s:GetFilesList()
     " get files list
     let files = s:Glob(expand('%:p:h') . '/*')
@@ -170,10 +178,7 @@ func! s:GetFilesList()
         call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
     endfor
 
-    " sort alphabetically
-    call sort(files)
-
-    return files
+    return sort(files, g:nf_sort_funcref)
 endfunc
 
 func! s:GetIdx(files, advance)
