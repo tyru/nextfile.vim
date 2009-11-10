@@ -1,7 +1,7 @@
 " vim:foldmethod=marker:fen:
 scriptencoding utf-8
 
-" DOCUMENT {{{1
+" DOCUMENT {{{
 "==================================================
 " Name: nextfile
 " Version: 0.0.2
@@ -11,11 +11,11 @@ scriptencoding utf-8
 " Description:
 "   open the next or previous file
 "
-" Change Log: {{{2
+" Change Log: {{{
 "   0.0.0: Initial upload.
 "   0.0.1: add g:nf_ignore_dir
 "   0.0.2: implement g:nf_ignore_ext.
-" }}}2
+" }}}
 "
 "
 " Usage:
@@ -89,18 +89,18 @@ scriptencoding utf-8
 "
 "
 "==================================================
-" }}}1
+" }}}
 
-" INCLUDE GUARD {{{1
+" INCLUDE GUARD {{{
 if exists('g:loaded_nextfile') && g:loaded_nextfile != 0 | finish | endif
 let g:loaded_nextfile = 1
-" }}}1
-" SAVING CPO {{{1
+" }}}
+" SAVING CPO {{{
 let s:save_cpo = &cpo
 set cpo&vim
-" }}}1
+" }}}
 
-" GLOBAL VARIABLES {{{1
+" GLOBAL VARIABLES {{{
 if ! exists('g:nf_map_next')
     let g:nf_map_next = '<Leader>n'
 endif
@@ -140,11 +140,12 @@ else
     call extend(g:nf_commands, s:commands, 'keep')
 endif
 unlet s:commands
-" }}}1
+" }}}
 
 
-" FUNCTION DEFINITION {{{1
+" FUNCTION DEFINITION {{{
 
+" UTIL FUNCTION {{{
 func! s:warn(msg)
     echohl WarningMsg
     echomsg a:msg
@@ -166,7 +167,7 @@ func! s:get_idx_of_list(lis, elem)
     throw "not found"
 endfunc
 
-func! s:glob(expr)
+func! s:glob_list(expr)
     let files = split(glob(a:expr), '\n')
     " get rid of '.' and '..'
     call filter(files, 'fnamemodify(v:val, ":t") !=# "." && fnamemodify(v:val, ":t") !=# ".."')
@@ -177,12 +178,15 @@ func! s:sort_compare(i, j)
     " alphabetically
     return a:i > a:j
 endfunc
+" }}}
+
+
 
 func! s:get_files_list()
     " get files list
-    let files = s:glob(expand('%:p:h') . '/*')
+    let files = s:glob_list(expand('%:p:h') . '/*')
     if g:nf_include_dotfiles
-        let files += s:glob(expand('%:p:h') . '/.*')
+        let files += s:glob_list(expand('%:p:h') . '/.*')
     endif
     if g:nf_ignore_dir
         call filter(files, '! isdirectory(v:val)')
@@ -228,7 +232,7 @@ func! s:open_next_file(advance)
     endif
 endfunc
 
-func! s:cmd_load_glob()
+func! s:cmd_load_glob(...)
     " TODO
 endfunc
 
@@ -244,14 +248,14 @@ func! s:cmd_next_prev(is_next, ...)
     endfor
 endfunc
 
-" }}}1
+" }}}
 
-" MAPPING {{{1
+" MAPPING {{{
 execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(1)<CR>', g:nf_map_next)
 execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(0)<CR>', g:nf_map_previous)
-" }}}1
+" }}}
 
-" COMMANDS {{{1
+" COMMANDS {{{
 let s:command_def = {
 \   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob()'],
 \   'NFNext'     : ['-nargs=?', 'call s:cmd_next_prev(1,<f-args>)'],
@@ -264,9 +268,9 @@ for [cmd, name] in items(g:nf_commands)
     endif
 endfor
 unlet s:command_def
-" }}}1
+" }}}
 
-" RESTORE CPO {{{1
+" RESTORE CPO {{{
 let &cpo = s:save_cpo
-" }}}1
+" }}}
 
