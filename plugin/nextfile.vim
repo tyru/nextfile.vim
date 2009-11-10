@@ -125,26 +125,24 @@ func! s:OpenNextFile(advance)
         return s:Warn("you didn't open any file")
     endif
 
-    try
-        " get files list
-        let files = s:GlobPath(expand('%:p:h'), '*')
-        if g:nf_include_dotfiles
-            let files += s:GlobPath(expand('%:p:h'), '.*')
-        endif
-        if g:nf_ignore_dir
-            call filter(files, '! isdirectory(v:val)')
-        endif
-        for ext in g:nf_ignore_ext
-            call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
-        endfor
+    " get files list
+    let files = s:GlobPath(expand('%:p:h'), '*')
+    if g:nf_include_dotfiles
+        let files += s:GlobPath(expand('%:p:h'), '.*')
+    endif
+    if g:nf_ignore_dir
+        call filter(files, '! isdirectory(v:val)')
+    endif
+    for ext in g:nf_ignore_ext
+        call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
+    endfor
 
+    try
         " get current file idx
         let tailed = map(copy(files), 'fnamemodify(v:val, ":t")')
         let idx = s:GetListIdx(tailed, expand('%:t'))
-
         " move to next or previous
         let idx = a:advance ? idx + 1 : idx - 1
-
     catch /^not found$/
         " open the first file.
         let idx = 0
