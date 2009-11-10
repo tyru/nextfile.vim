@@ -122,7 +122,7 @@ endfunc
 
 func! s:OpenNextFile(advance)
     if g:nf_disable_if_empty_name && expand('%') ==# ''
-        return s:Warn("you didn't open any file")
+        return s:Warn("current file is empty.")
     endif
 
     " get files list
