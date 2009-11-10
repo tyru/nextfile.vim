@@ -65,11 +65,11 @@ scriptencoding utf-8
 "               \   'NFPrev'     : 'NFPrev',
 "               \ }
 "
-"       g:nf_sort_funcref (default: '<SID>SortCompare')
+"       g:nf_sort_funcref (default: '<SID>sort_compare')
 "           function string or Funcref passed to sort().
 "
 "           default function's definition:
-"               func! s:SortCompare(i, j)
+"               func! s:sort_compare(i, j)
 "                   " alphabetically
 "                   return a:i > a:j
 "               endfunc
@@ -126,7 +126,7 @@ if ! exists('g:nf_disable_if_empty_name')
     let g:nf_disable_if_empty_name = 0
 endif
 if ! exists('g:nf_sort_funcref')
-    let g:nf_sort_funcref = '<SID>SortCompare'
+    let g:nf_sort_funcref = '<SID>sort_compare'
 endif
 
 let s:commands = {
@@ -145,13 +145,13 @@ unlet s:commands
 
 " FUNCTION DEFINITION {{{1
 
-func! s:Warn(msg)
+func! s:warn(msg)
     echohl WarningMsg
     echo a:msg
     echohl None
 endfunc
 
-func! s:GetListIdx(lis, elem)
+func! s:get_idx_of_list(lis, elem)
     let i = 0
     while i < len(a:lis)
         if a:lis[i] ==# a:elem
@@ -162,23 +162,23 @@ func! s:GetListIdx(lis, elem)
     throw "not found"
 endfunc
 
-func! s:Glob(expr)
+func! s:glob(expr)
     let files = split(glob(a:expr), '\n')
     " get rid of '.' and '..'
     call filter(files, 'fnamemodify(v:val, ":t") !=# "." && fnamemodify(v:val, ":t") !=# ".."')
     return files
 endfunc
 
-func! s:SortCompare(i, j)
+func! s:sort_compare(i, j)
     " alphabetically
     return a:i > a:j
 endfunc
 
-func! s:GetFilesList()
+func! s:get_files_list()
     " get files list
-    let files = s:Glob(expand('%:p:h') . '/*')
+    let files = s:glob(expand('%:p:h') . '/*')
     if g:nf_include_dotfiles
-        let files += s:Glob(expand('%:p:h') . '/.*')
+        let files += s:glob(expand('%:p:h') . '/.*')
     endif
     if g:nf_ignore_dir
         call filter(files, '! isdirectory(v:val)')
@@ -190,11 +190,11 @@ func! s:GetFilesList()
     return sort(files, g:nf_sort_funcref)
 endfunc
 
-func! s:GetIdx(files, advance)
+func! s:get_idx(files, advance)
     try
         " get current file idx
         let tailed = map(copy(a:files), 'fnamemodify(v:val, ":t")')
-        let idx = s:GetListIdx(tailed, expand('%:t'))
+        let idx = s:get_idx_of_list(tailed, expand('%:t'))
         " move to next or previous
         let idx = a:advance ? idx + 1 : idx - 1
     catch /^not found$/
@@ -204,30 +204,31 @@ func! s:GetIdx(files, advance)
     return idx
 endfunc
 
-func! s:OpenNextFile(advance)
+func! s:open_next_file(advance)
     if g:nf_disable_if_empty_name && expand('%') ==# ''
-        return s:Warn("current file is empty.")
+        return s:warn("current file is empty.")
     endif
 
-    let files = s:GetFilesList()
+    let files = s:get_files_list()
     if empty(files) | return | endif
-    let idx   = s:GetIdx(files, a:advance)
+    let idx   = s:get_idx(files, a:advance)
+
     if get(files, idx, -1) !=# -1
         " can access to files[idx]
         execute g:nf_open_command fnameescape(files[idx])
     elseif g:nf_loop_files
         let idx = idx < 0 ? idx : idx - len(files)
-        execute g:nf_open_command . ' ' . fnameescape(files[idx])
+        execute g:nf_open_command fnameescape(files[idx])
     else
-        call s:Warn(printf('no %s file.', a:advance ? 'next' : 'previous'))
+        call s:warn(printf('no %s file.', a:advance ? 'next' : 'previous'))
     endif
 endfunc
 
-func! s:CmdLoadGlob()
+func! s:cmd_load_glob()
     " TODO
 endfunc
 
-func! s:CmdNextPrev(is_next, ...)
+func! s:cmd_next_prev(is_next, ...)
     try
         let times = range(1, a:0 == 0 ? 1 : str2nr(a:1))
     catch
@@ -235,22 +236,22 @@ func! s:CmdNextPrev(is_next, ...)
         return
     endtry
     for i in times
-        call s:OpenNextFile(a:is_next)
+        call s:open_next_file(a:is_next)
     endfor
 endfunc
 
 " }}}1
 
 " MAPPING {{{1
-execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(1)<CR>', g:nf_map_next)
-execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(0)<CR>', g:nf_map_previous)
+execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(1)<CR>', g:nf_map_next)
+execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(0)<CR>', g:nf_map_previous)
 " }}}1
 
 " COMMANDS {{{1
 let s:command_def = {
-\   'NFLoadGlob' : ['-nargs=+', 'call s:CmdLoadGlob()'],
-\   'NFNext'     : ['-nargs=?', 'call s:CmdNextPrev(1,<f-args>)'],
-\   'NFPrev'     : ['-nargs=?', 'call s:CmdNextPrev(0,<f-args>)'],
+\   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob()'],
+\   'NFNext'     : ['-nargs=?', 'call s:cmd_next_prev(1,<f-args>)'],
+\   'NFPrev'     : ['-nargs=?', 'call s:cmd_next_prev(0,<f-args>)'],
 \ }
 for [cmd, name] in items(g:nf_commands)
     if !empty(name)
