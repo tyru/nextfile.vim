@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-10.
+" Last Change: 2009-11-11.
 "
 " Description:
 "   open the next or previous file
@@ -152,17 +152,15 @@ endfunc
 
 func! s:GlobPath(path, expr)
     let files = split(globpath(a:path, a:expr), '\n')
+    " get filename
     call map(files, 'fnamemodify(v:val, ":t")')
+    " get rid of '.' and '..'
     call filter(files, 'v:val !=# "." && v:val !=# ".."')
     call map(files, 'a:path . "/" . v:val')
     return files
 endfunc
 
-func! s:OpenNextFile(advance)
-    if g:nf_disable_if_empty_name && expand('%') ==# ''
-        return s:Warn("current file is empty.")
-    endif
-
+func! s:GetFilesList()
     " get files list
     let files = s:GlobPath(expand('%:p:h'), '*')
     if g:nf_include_dotfiles
@@ -175,9 +173,13 @@ func! s:OpenNextFile(advance)
         call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
     endfor
 
+    return files
+endfunc
+
+func! s:GetIdx(files, advance)
     try
         " get current file idx
-        let tailed = map(copy(files), 'fnamemodify(v:val, ":t")')
+        let tailed = map(copy(a:files), 'fnamemodify(v:val, ":t")')
         let idx = s:GetListIdx(tailed, expand('%:t'))
         " move to next or previous
         let idx = a:advance ? idx + 1 : idx - 1
@@ -185,10 +187,19 @@ func! s:OpenNextFile(advance)
         " open the first file.
         let idx = 0
     endtry
+    return idx
+endfunc
 
+func! s:OpenNextFile(advance)
+    if g:nf_disable_if_empty_name && expand('%') ==# ''
+        return s:Warn("current file is empty.")
+    endif
 
-    " can access to files[idx]
+    let files = s:GetFilesList()
+    let idx   = s:GetIdx(files, a:advance)
+    " XXX 'idx >= 0' is necessary?
     if idx >= 0 && get(files, idx, -1) !=# -1
+        " can access to files[idx]
         execute g:nf_open_command . ' ' . fnameescape(files[idx])
     elseif g:nf_loop_files
         let idx = idx < 0 ? idx : idx - len(files)
