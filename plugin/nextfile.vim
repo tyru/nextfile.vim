@@ -193,6 +193,7 @@ func! s:OpenNextFile(advance)
     endif
 
     let files = s:GetFilesList()
+    if empty(files) | return | endif
     let idx   = s:GetIdx(files, a:advance)
     " XXX 'idx >= 0' is necessary?
     if idx >= 0 && get(files, idx, -1) !=# -1
