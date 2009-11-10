@@ -147,8 +147,12 @@ unlet s:commands
 
 func! s:warn(msg)
     echohl WarningMsg
-    echo a:msg
+    echomsg a:msg
     echohl None
+endfunc
+
+func! s:warnf(fmt, ...)
+    call s:warn(call('printf', [a:fmt] + a:000))
 endfunc
 
 func! s:get_idx_of_list(lis, elem)
@@ -220,7 +224,7 @@ func! s:open_next_file(advance)
         let idx = idx < 0 ? idx : idx - len(files)
         execute g:nf_open_command fnameescape(files[idx])
     else
-        call s:warn(printf('no %s file.', a:advance ? 'next' : 'previous'))
+        call s:warnf('no %s file.', a:advance ? 'next' : 'previous')
     endif
 endfunc
 
