@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.2
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-11.
+" Last Change: 2009-11-17.
 "
 " Description:
 "   open the next or previous file
@@ -148,16 +148,19 @@ unlet s:commands
 " FUNCTION DEFINITION {{{
 
 " UTIL FUNCTION {{{
+" s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
     echomsg a:msg
     echohl None
 endfunc
-
+" }}}
+" s:warnf {{{
 func! s:warnf(fmt, ...)
     call s:warn(call('printf', [a:fmt] + a:000))
 endfunc
-
+" }}}
+" s:get_idx_of_list {{{
 func! s:get_idx_of_list(lis, elem)
     let i = 0
     while i < len(a:lis)
@@ -168,22 +171,24 @@ func! s:get_idx_of_list(lis, elem)
     endwhile
     throw "not found"
 endfunc
-
+" }}}
+" s:glob_list {{{
 func! s:glob_list(expr)
     let files = split(glob(a:expr), '\n')
     " get rid of '.' and '..'
     call filter(files, 'fnamemodify(v:val, ":t") !=# "." && fnamemodify(v:val, ":t") !=# ".."')
     return files
 endfunc
-
+" }}}
+" s:sort_compare {{{
 func! s:sort_compare(i, j)
     " alphabetically
     return a:i > a:j
 endfunc
 " }}}
+" }}}
 
-
-
+" s:get_files_list {{{
 func! s:get_files_list(...)
     let glob_expr = a:0 == 0 ? '*' : a:1
     " get files list
@@ -200,7 +205,8 @@ func! s:get_files_list(...)
 
     return sort(files, g:nf_sort_funcref)
 endfunc
-
+" }}}
+" s:get_idx {{{
 func! s:get_idx(files, advance)
     try
         " get current file idx
@@ -214,7 +220,8 @@ func! s:get_idx(files, advance)
     endtry
     return idx
 endfunc
-
+" }}}
+" s:open_next_file {{{
 func! s:open_next_file(advance)
     if g:nf_disable_if_empty_name && expand('%') ==# ''
         return s:warn("current file is empty.")
@@ -234,7 +241,8 @@ func! s:open_next_file(advance)
         call s:warnf('no %s file.', a:advance ? 'next' : 'previous')
     endif
 endfunc
-
+" }}}
+" s:cmd_load_glob {{{
 func! s:cmd_load_glob(...)
     let files = []
     for glob_expr in a:000
@@ -255,7 +263,8 @@ func! s:cmd_load_glob(...)
         execute save_bufnr . 'buffer'
     endtry
 endfunc
-
+" }}}
+" s:cmd_next_prev {{{
 func! s:cmd_next_prev(is_next, ...)
     try
         let times = range(1, a:0 == 0 ? 1 : str2nr(a:1))
@@ -267,7 +276,7 @@ func! s:cmd_next_prev(is_next, ...)
         call s:open_next_file(a:is_next)
     endfor
 endfunc
-
+" }}}
 " }}}
 
 " MAPPING {{{
