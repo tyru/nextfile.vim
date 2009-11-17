@@ -206,8 +206,8 @@ func! s:get_files_list(...)
     return sort(files, g:nf_sort_funcref)
 endfunc
 " }}}
-" s:get_idx {{{
-func! s:get_idx(files, advance)
+" s:get_next_idx {{{
+func! s:get_next_idx(files, advance)
     try
         " get current file idx
         let tailed = map(copy(a:files), 'fnamemodify(v:val, ":t")')
@@ -229,7 +229,7 @@ func! s:open_next_file(advance)
 
     let files = s:get_files_list()
     if empty(files) | return | endif
-    let idx   = s:get_idx(files, a:advance)
+    let idx   = s:get_next_idx(files, a:advance)
 
     if get(files, idx, -1) !=# -1
         " can access to files[idx]
