@@ -231,11 +231,21 @@ func! s:open_next_file(advance)
     if empty(files) | return | endif
     let idx   = s:get_next_idx(files, a:advance, v:count1)
 
-    if get(files, idx, -1) !=# -1
+    if 0 <= idx && idx < len(files)
         " can access to files[idx]
         execute g:nf_open_command fnameescape(files[idx])
     elseif g:nf_loop_files
-        let idx = idx < 0 ? idx : idx - len(files)
+        " wrap around
+        if idx < 0
+            " fortunately recent LL languages support negative index :)
+            let idx = -(abs(idx) % len(files))
+            " But if you want to access to 'real' index:
+            " if idx != 0
+            "     let idx = len(files) + idx
+            " endif
+        else
+            let idx = idx % len(files)
+        endif
         execute g:nf_open_command fnameescape(files[idx])
     else
         call s:warnf('no %s file.', a:advance ? 'next' : 'previous')
