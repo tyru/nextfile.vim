@@ -207,13 +207,13 @@ func! s:get_files_list(...)
 endfunc
 " }}}
 " s:get_next_idx {{{
-func! s:get_next_idx(files, advance)
+func! s:get_next_idx(files, advance, cnt)
     try
         " get current file idx
         let tailed = map(copy(a:files), 'fnamemodify(v:val, ":t")')
         let idx = s:get_idx_of_list(tailed, expand('%:t'))
         " move to next or previous
-        let idx = a:advance ? idx + 1 : idx - 1
+        let idx = a:advance ? idx + a:cnt : idx - a:cnt
     catch /^not found$/
         " open the first file.
         let idx = 0
@@ -229,7 +229,7 @@ func! s:open_next_file(advance)
 
     let files = s:get_files_list()
     if empty(files) | return | endif
-    let idx   = s:get_next_idx(files, a:advance)
+    let idx   = s:get_next_idx(files, a:advance, v:count1)
 
     if get(files, idx, -1) !=# -1
         " can access to files[idx]
@@ -280,8 +280,8 @@ endfunc
 " }}}
 
 " MAPPING {{{
-execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(1)<CR>', g:nf_map_next)
-execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(0)<CR>', g:nf_map_previous)
+execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(1)<CR>', g:nf_map_next)
+execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(0)<CR>', g:nf_map_previous)
 " }}}
 
 " COMMANDS {{{
