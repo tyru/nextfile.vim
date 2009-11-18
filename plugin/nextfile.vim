@@ -4,7 +4,7 @@ scriptencoding utf-8
 " DOCUMENT {{{
 "==================================================
 " Name: nextfile
-" Version: 0.0.2
+" Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
 " Last Change: 2009-11-18.
 "
