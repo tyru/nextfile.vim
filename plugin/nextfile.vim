@@ -15,6 +15,13 @@ scriptencoding utf-8
 "   0.0.0: Initial upload.
 "   0.0.1: add g:nf_ignore_dir
 "   0.0.2: implement g:nf_ignore_ext.
+"   0.0.3:
+"     - fix edge case bug
+"     - mappings support range
+"       ('10<Leader>n' opens a file which is 10 files away from current file.
+"        '10<Leader>p' is reverse sequence)
+"     - add options g:nf_disable_if_empty_name, g:nf_sort_funcref, g:nf_commands
+"     - etc.
 " }}}
 "
 "
@@ -51,6 +58,7 @@ scriptencoding utf-8
 "
 "       g:nf_disable_if_empty_name (default: 0)
 "           do not run mapping if current file name is empty.
+"           behave like old version if this is true.
 "
 "       g:nf_commands (default: see below)
 "           command's names.
