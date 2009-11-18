@@ -253,7 +253,6 @@ func! s:cmd_load_glob(...)
         let files += filter(s:glob_list(glob_expr), 'filereadable(v:val)')
     endfor
     " call sort(files, g:nf_sort_funcref)
-    call s:warnf('a:000 [%s], files [%s]', string(a:000), string(files))
 
     let save_pos   = getpos('.')
     let save_bufnr = bufnr('%')
