@@ -258,6 +258,7 @@ func! s:cmd_load_glob(...)
     let save_bufnr = bufnr('%')
     try
         for f in files
+            " XXX: Adding :silent will NOT load anything. (Vim's bug?)
             execute 'edit' f
         endfor
     finally
