@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.2
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-17.
+" Last Change: 2009-11-18.
 "
 " Description:
 "   open the next or previous file
@@ -61,8 +61,6 @@ scriptencoding utf-8
 "           default value:
 "               let g:nf_commands = {
 "               \   'NFLoadGlob' : 'NFLoadGlob',
-"               \   'NFNext'     : 'NFNext',
-"               \   'NFPrev'     : 'NFPrev',
 "               \ }
 "
 "       g:nf_sort_funcref (default: '<SID>sort_compare')
@@ -80,12 +78,6 @@ scriptencoding utf-8
 "           this command just load files to buffers, does not edit them.
 "           g:nf_include_dotfiles, g:nf_ignore_*, etc. influence globbed file's list.
 "               :NFLoadGlob *   " to load all files in current directory.
-"       :NFNext
-"           open next file.
-"           you can pass the number of loading buffers.
-"       :NFPrev
-"           open previous file.
-"           you can pass the number of loading buffers.
 "
 "
 " TODO
@@ -133,8 +125,6 @@ endif
 
 let s:commands = {
 \   'NFLoadGlob' : 'NFLoadGlob',
-\   'NFNext'     : 'NFNext',
-\   'NFPrev'     : 'NFPrev',
 \ }
 if ! exists('g:nf_commands')
     let g:nf_commands = s:commands
@@ -187,6 +177,7 @@ func! s:sort_compare(i, j)
 endfunc
 " }}}
 " }}}
+
 
 " s:get_files_list {{{
 func! s:get_files_list(...)
@@ -252,6 +243,8 @@ func! s:open_next_file(advance)
     endif
 endfunc
 " }}}
+
+
 " s:cmd_load_glob {{{
 func! s:cmd_load_glob(...)
     let files = []
@@ -274,19 +267,6 @@ func! s:cmd_load_glob(...)
     endtry
 endfunc
 " }}}
-" s:cmd_next_prev {{{
-func! s:cmd_next_prev(is_next, ...)
-    try
-        let times = range(1, a:0 == 0 ? 1 : str2nr(a:1))
-    catch
-        " out of range
-        return
-    endtry
-    for i in times
-        call s:open_next_file(a:is_next)
-    endfor
-endfunc
-" }}}
 " }}}
 
 " MAPPING {{{
@@ -297,8 +277,6 @@ execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(0)<C
 " COMMANDS {{{
 let s:command_def = {
 \   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob(<f-args>)'],
-\   'NFNext'     : ['-nargs=?', 'call s:cmd_next_prev(1,<f-args>)'],
-\   'NFPrev'     : ['-nargs=?', 'call s:cmd_next_prev(0,<f-args>)'],
 \ }
 for [cmd, name] in items(g:nf_commands)
     if !empty(name)
