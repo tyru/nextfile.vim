@@ -276,7 +276,7 @@ execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(0)<C
 
 " COMMANDS {{{
 let s:command_def = {
-\   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob(<f-args>)'],
+\   'NFLoadGlob' : ['-complete=file -nargs=+', 'call s:cmd_load_glob(<f-args>)'],
 \ }
 for [cmd, name] in items(g:nf_commands)
     if !empty(name)
