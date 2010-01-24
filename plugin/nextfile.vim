@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-01-20.
+" Last Change: 2010-01-24.
 "
 " Description:
 "   open the next or previous file
@@ -92,6 +92,7 @@ scriptencoding utf-8
 "
 " TODO
 " - add option of list of patterns to skip specified files
+" - mappings to open the first/last file.
 "==================================================
 " }}}
 
