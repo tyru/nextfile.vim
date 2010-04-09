@@ -18,7 +18,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-01-24.
+" Last Change: 2010-04-03.
 "
 " Description:
 "   open the next or previous file
@@ -293,8 +293,15 @@ endfunc
 " }}}
 
 " MAPPING {{{
-execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(1)<CR>', g:nf_map_next)
-execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(0)<CR>', g:nf_map_previous)
+nnoremap <Plug>(nextfile-next) :<C-u>call <SID>open_next_file(1)<CR>
+nnoremap <Plug>(nextfile-previous) :<C-u>call <SID>open_next_file(0)<CR>
+
+if g:nf_map_next != ''
+    execute 'nmap <silent><unique>' g:nf_map_next '<Plug>(nextfile-next)'
+endif
+if g:nf_map_previous != ''
+    execute 'nmap <silent><unique>' g:nf_map_previous '<Plug>(nextfile-previous)'
+endif
 " }}}
 
 " COMMANDS {{{
