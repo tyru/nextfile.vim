@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-10-24.
+" Last Change: 2012-06-16.
 " License: Distributable under the same terms as Vim itself (see :help license)
 "
 " Description:
@@ -294,16 +294,18 @@ endif
 " }}}
 
 " COMMANDS {{{
-let s:command_def = {
-\   'NFLoadGlob' : ['-complete=file -nargs=+', 'call s:cmd_load_glob(<f-args>)'],
-\ }
-for [cmd, name] in items(g:nf_commands)
-    if !empty(name)
-        let [opt, def] = s:command_def[cmd]
-        execute printf("command %s %s %s", opt, name, def)
-    endif
-endfor
-unlet s:command_def
+function s:define_commands()
+    let command_def = {
+    \   'NFLoadGlob' : ['-complete=file -nargs=+', 'call s:cmd_load_glob(<f-args>)'],
+    \ }
+    for [cmd, name] in items(g:nf_commands)
+        if !empty(name)
+            let [opt, def] = command_def[cmd]
+            execute printf("command %s %s %s", opt, name, def)
+        endif
+    endfor
+endfunction
+call s:define_commands()
 " }}}
 
 " RESTORE CPO {{{
