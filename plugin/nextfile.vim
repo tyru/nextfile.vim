@@ -144,9 +144,9 @@ func! s:open_next_file(advance)
     elseif g:nf_loop_files
         " wrap around
         if idx < 0
-            " fortunately recent LL languages support negative index :)
+            " fortunately VimL supports negative index :)
             let idx = -(abs(idx) % len(files))
-            " But if you want to access to 'real' index:
+            " If you want to access to 'real' index, uncomment this.
             " if idx != 0
             "     let idx = len(files) + idx
             " endif
