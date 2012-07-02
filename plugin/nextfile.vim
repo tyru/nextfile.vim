@@ -26,6 +26,9 @@ endif
 if ! exists('g:nf_loop_files')
     let g:nf_loop_files = 0
 endif
+if ! exists('g:nf_loop_hook_fn')
+    let g:nf_loop_hook_fn = ''
+endif
 if ! exists('g:nf_ignore_dir')
     let g:nf_ignore_dir = 1
 endif
@@ -153,7 +156,9 @@ func! s:open_next_file(advance)
         else
             let idx = idx % len(files)
         endif
-        execute g:nf_open_command fnameescape(files[idx])
+        if g:nf_loop_hook_fn ==# '' || call(g:nf_loop_hook_fn, [files[idx]])
+            execute g:nf_open_command fnameescape(files[idx])
+        endif
     else
         call s:warnf('no %s file.', a:advance ? 'next' : 'previous')
     endif
