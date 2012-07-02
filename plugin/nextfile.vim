@@ -186,8 +186,8 @@ endfunc
 " }}}
 
 " MAPPING {{{
-nnoremap <Plug>(nextfile-next) :<C-u>call <SID>open_next_file(1)<CR>
-nnoremap <Plug>(nextfile-previous) :<C-u>call <SID>open_next_file(0)<CR>
+nnoremap <silent> <Plug>(nextfile-next) :<C-u>call <SID>open_next_file(1)<CR>
+nnoremap <silent> <Plug>(nextfile-previous) :<C-u>call <SID>open_next_file(0)<CR>
 
 if g:nf_map_next != ''
     execute 'silent! nmap <silent><unique>' g:nf_map_next '<Plug>(nextfile-next)'
