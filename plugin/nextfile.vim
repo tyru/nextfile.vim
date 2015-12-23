@@ -39,7 +39,7 @@ if ! exists('g:nf_disable_if_empty_name')
     let g:nf_disable_if_empty_name = 0
 endif
 if ! exists('g:nf_sort_funcref')
-    let g:nf_sort_funcref = '<SID>sort_compare'
+    let g:nf_sort_funcref = 'nextfile#compare_by_string'
 endif
 
 let s:commands = {

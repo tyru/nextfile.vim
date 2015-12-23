@@ -137,7 +137,7 @@ function! s:glob_list(expr) abort
     return files
 endfunction
 
-function! s:sort_compare(a, b) abort
+function! nextfile#compare_by_string(a, b) abort
     let [a, b] = [string(a:a), string(a:b)]
     return a ==# b ? 0 : a > b ? 1 : -1
 endfunction
