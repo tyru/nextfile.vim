@@ -12,7 +12,8 @@ function! nextfile#open_previous() abort
 endfunction
 
 
-" Get files on current directory.
+" Get files on a directory of current buffer.
+" (NOT FILES ON CURRENT DIRECTORY!)
 function! s:get_current_files() abort
     " get files list
     let files = s:glob_list(expand('%:p:h') . '/*')
@@ -22,8 +23,7 @@ function! s:get_current_files() abort
     if g:nf_ignore_dir
         call filter(files, '! isdirectory(v:val)')
     endif
-    let curbuf_is_on_same_dir = (expand('%:.') !~ '[/\\]')
-    if curbuf_is_on_same_dir && !filereadable(expand('%'))
+    if !filereadable(expand('%'))
         " If current buffer is deleted on filesystem,
         " add it as like it exists (#2).
         let files += [expand('%:p')]
