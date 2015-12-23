@@ -109,6 +109,12 @@ func! s:get_files_list(...)
     if g:nf_ignore_dir
         call filter(files, '! isdirectory(v:val)')
     endif
+    let curbuf_is_on_same_dir = (expand('%:.') !~ '[/\\]')
+    if curbuf_is_on_same_dir && !filereadable(expand('%'))
+        " If current buffer is deleted on filesystem,
+        " add it as like it exists (#2).
+        let files += [expand('%:p')]
+    endif
     for ext in g:nf_ignore_ext
         call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
     endfor
