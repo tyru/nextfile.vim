@@ -31,8 +31,9 @@ function! s:get_current_files() abort
     for ext in g:nf_ignore_ext
         call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
     endfor
-    call map(files, 'fnamemodify(v:val, ":p")')
 
+    " Convert to absolute path to make comparison easy.
+    call map(files, 'fnamemodify(v:val, ":p")')
     return sort(files, g:nf_sort_funcref)
 endfunction
 
