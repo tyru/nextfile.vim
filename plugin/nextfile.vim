@@ -98,11 +98,11 @@ endfunc
 " }}}
 
 
-" s:get_files_list {{{
-func! s:get_files_list(...)
-    let glob_expr = a:0 == 0 ? '*' : a:1
+" s:get_current_files {{{
+" Get files on current directory.
+func! s:get_current_files()
     " get files list
-    let files = s:glob_list(expand('%:p:h') . '/' . glob_expr)
+    let files = s:glob_list(expand('%:p:h') . '/*')
     if g:nf_include_dotfiles
         let files += s:glob_list(expand('%:p:h') . '/.*')
     endif
@@ -118,6 +118,7 @@ func! s:get_files_list(...)
     for ext in g:nf_ignore_ext
         call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
     endfor
+    call map(files, 'fnamemodify(v:val, ":p")')
 
     return sort(files, g:nf_sort_funcref)
 endfunc
@@ -143,7 +144,7 @@ func! s:open_next_file(advance)
         return s:warn("current file is empty.")
     endif
 
-    let files = s:get_files_list()
+    let files = s:get_current_files()
     if empty(files) | return | endif
     let idx   = s:get_next_idx(files, a:advance, v:count1)
 
