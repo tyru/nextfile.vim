@@ -1,4 +1,4 @@
-*nextfile.txt* *nextfile* open the next or previous file
+*nextfile.txt* open the next or previous file
 
 Author:
   tyru <tyru.exe@gmail.com>
